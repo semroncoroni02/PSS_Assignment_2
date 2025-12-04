@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Test slice del web layer per BookController.
  * Usa MockMvc per eseguire richieste e @MockitoBean per mockare il BookRepository.
  */
+@SpringBootTest(classes = LibraryManagementApplication.class)
 @WebMvcTest(BookController.class)
 public class BookControllerTest {
 
