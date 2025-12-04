@@ -1,4 +1,3 @@
-
 package com.library.librarymanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,32 +9,29 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-// Import corretto per @MockitoBean (Spring Framework - spring-test)
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Test slice del web layer per UserController.
- * Usa MockMvc per eseguire richieste e @MockitoBean per mockare il UserRepository.
+ * Unit test for UserController.
+ * <p>
+ * These tests mock the repository layer to isolate the web layer behavior.
+ * Each test verifies HTTP responses, JSON payloads and expected interaction
+ * with the repository.
  */
-
-@SpringBootTest(classes = LibraryManagementApplication.class)
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,8 +42,11 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Retrieves a list of users via GET and verifies JSON structure and content.
+     */
     @Test
-    @DisplayName("GET /users - restituisce tutti gli utenti")
+    @DisplayName("GET /users - returns all users")
     void getAllUsers() throws Exception {
         List<User> users = Arrays.asList(
                 new User("Mario Rossi", "mario.rossi@example.com"),
@@ -62,8 +61,11 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[1].email", is("laura.bianchi@example.com")));
     }
 
+    /**
+     * Creates a new user via POST and validates returned JSON fields.
+     */
     @Test
-    @DisplayName("POST /users - crea un utente")
+    @DisplayName("POST /users - creates a new user")
     void createUser() throws Exception {
         User input = new User("Giulia Verdi", "giulia.verdi@example.com");
         Mockito.when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -76,12 +78,15 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email", is("giulia.verdi@example.com")));
     }
 
+    /**
+     * Updates an existing user and checks both HTTP result and updated values.
+     */
     @Test
-    @DisplayName("PUT /users/{id} - aggiorna un utente esistente")
+    @DisplayName("PUT /users/{id} - updates existing user")
     void updateUser() throws Exception {
         Long id = 5L;
-        User existing = new User("Nome Vecchio", "old@example.com");
-        User update = new User("Nome Nuovo", "new@example.com");
+        User existing = new User("Old Name", "old@example.com");
+        User update = new User("New Name", "new@example.com");
 
         Mockito.when(userRepository.findById(eq(id))).thenReturn(Optional.of(existing));
         Mockito.when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -90,12 +95,15 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(update)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("Nome Nuovo")))
+                .andExpect(jsonPath("$.name", is("New Name")))
                 .andExpect(jsonPath("$.email", is("new@example.com")));
     }
 
+    /**
+     * Deletes a user via DELETE and verifies the repository interaction.
+     */
     @Test
-    @DisplayName("DELETE /users/{id} - elimina utente")
+    @DisplayName("DELETE /users/{id} - deletes user")
     void deleteUser() throws Exception {
         Long id = 7L;
 

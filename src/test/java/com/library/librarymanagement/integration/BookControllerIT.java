@@ -1,4 +1,3 @@
-
 package com.library.librarymanagement.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +17,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests end-to-end per BookController.
+ * Integration tests end-to-end for BookController.
+ * <p>
+ * These tests validate REST endpoints and persistence interactions:
+ * - POST /books -> create
+ * - GET  /books -> list
+ * - PUT  /books/{id} -> update
+ * - DELETE /books/{id} -> delete
+ * <p>
+ * The repository is reset before each test to maintain isolation.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,11 +40,17 @@ class BookControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Ensure a clean repository before every test case.
+     */
     @BeforeEach
     void setup() {
         bookRepository.deleteAll();
     }
 
+    /**
+     * Creates a book via POST and verifies response and listing behavior.
+     */
     @Test
     @DisplayName("POST + GET /books - crea e lista libri")
     void createAndListBooks() throws Exception {
@@ -56,6 +69,9 @@ class BookControllerIT {
                 .andExpect(jsonPath("$[0].title").value("Il nome della rosa"));
     }
 
+    /**
+     * Updates an existing book and verifies both HTTP response and database state.
+     */
     @Test
     @DisplayName("PUT /books/{id} - aggiorna libro esistente")
     void updateBook() throws Exception {
@@ -78,6 +94,9 @@ class BookControllerIT {
         assertThat(reloaded.getPublicationYear()).isEqualTo(2020);
     }
 
+    /**
+     * Deletes a book and verifies it is removed from the repository.
+     */
     @Test
     @DisplayName("DELETE /books/{id} - elimina libro")
     void deleteBook() throws Exception {

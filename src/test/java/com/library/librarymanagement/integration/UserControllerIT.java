@@ -1,4 +1,3 @@
-
 package com.library.librarymanagement.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +17,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests end-to-end per UserController.
+ * Integration tests end-to-end for UserController.
+ * <p>
+ * The tests exercise REST endpoints and verify persisted state in the repository.
+ * Each test is independent because the repository is cleaned before execution.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,11 +35,17 @@ class UserControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Clean state before each test to ensure isolation.
+     */
     @BeforeEach
     void setup() {
         userRepository.deleteAll();
     }
 
+    /**
+     * Creates a user via POST and validates the created resource and listing endpoint.
+     */
     @Test
     @DisplayName("POST + GET /users - crea e lista utenti")
     void createAndListUsers() throws Exception {
@@ -55,6 +63,9 @@ class UserControllerIT {
                 .andExpect(jsonPath("$[0].email").value("mario.rossi@example.com"));
     }
 
+    /**
+     * Updates an existing user and verifies both HTTP response and persisted values.
+     */
     @Test
     @DisplayName("PUT /users/{id} - aggiorna utente esistente")
     void updateUser() throws Exception {
@@ -75,6 +86,9 @@ class UserControllerIT {
         assertThat(reloaded.getEmail()).isEqualTo("new@example.com");
     }
 
+    /**
+     * Deletes a user and verifies it is no longer present in the repository.
+     */
     @Test
     @DisplayName("DELETE /users/{id} - elimina utente")
     void deleteUser() throws Exception {

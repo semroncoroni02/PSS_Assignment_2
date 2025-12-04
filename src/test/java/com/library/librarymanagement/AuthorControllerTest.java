@@ -1,4 +1,3 @@
-
 package com.library.librarymanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,26 +9,29 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = LibraryManagementApplication.class)
+/**
+ * Unit test for AuthorController.
+ * <p>
+ * These tests mock the repository layer to isolate the web layer behavior.
+ * Each test verifies HTTP responses, JSON payloads and expected interaction
+ * with the repository.
+ */
 @WebMvcTest(AuthorController.class)
-public class AuthorControllerTest {
+class AuthorControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,8 +42,11 @@ public class AuthorControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Retrieves a list of authors via GET and verifies JSON structure and content.
+     */
     @Test
-    @DisplayName("GET /authors - restituisce tutti gli autori")
+    @DisplayName("GET /authors - returns all authors")
     void getAllAuthors() throws Exception {
         List<Author> authors = Arrays.asList(
                 new Author("Italo Calvino", "Italiana"),
@@ -56,10 +61,14 @@ public class AuthorControllerTest {
                 .andExpect(jsonPath("$[1].nationality", is("Giapponese")));
     }
 
+    /**
+     * Creates a new author via POST and validates returned JSON fields.
+     */
     @Test
-    @DisplayName("POST /authors - crea un autore")
+    @DisplayName("POST /authors - creates a new author")
     void createAuthor() throws Exception {
         Author input = new Author("Umberto Eco", "Italiana");
+
         Mockito.when(authorRepository.save(any(Author.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
@@ -71,8 +80,11 @@ public class AuthorControllerTest {
                 .andExpect(jsonPath("$.nationality", is("Italiana")));
     }
 
+    /**
+     * Updates an existing author and checks both HTTP result and updated values.
+     */
     @Test
-    @DisplayName("PUT /authors/{id} - aggiorna un autore esistente")
+    @DisplayName("PUT /authors/{id} - updates existing author")
     void updateAuthor() throws Exception {
         Long id = 1L;
         Author existing = new Author("Autore Vecchio", "Vecchia");
@@ -90,8 +102,11 @@ public class AuthorControllerTest {
                 .andExpect(jsonPath("$.nationality", is("Nuova")));
     }
 
+    /**
+     * Deletes an author via DELETE and verifies the repository interaction.
+     */
     @Test
-    @DisplayName("DELETE /authors/{id} - elimina autore")
+    @DisplayName("DELETE /authors/{id} - deletes author")
     void deleteAuthor() throws Exception {
         Long id = 1L;
 
