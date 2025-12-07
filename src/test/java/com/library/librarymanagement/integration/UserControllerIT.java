@@ -17,10 +17,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests end-to-end for UserController.
+ * Integration tests end-to-end for {@code UserController}.
  * <p>
- * The tests exercise REST endpoints and verify persisted state in the repository.
- * Each test is independent because the repository is cleaned before execution.
+ * These tests validate REST endpoints and persistence interactions involving
+ * {@link User} entities, using {@link MockMvc} to simulate HTTP requests.
+ *
+ * <h2>Scope</h2>
+ * <ul>
+ *     <li>POST /users — create a user</li>
+ *     <li>GET  /users — list users</li>
+ *     <li>PUT  /users/{id} — update user</li>
+ *     <li>DELETE /users/{id} — delete user</li>
+ * </ul>
+ *
+ * <p>
+ * Notes:
+ * <ul>
+ *     <li>The repository is cleaned before each test to ensure isolation.</li>
+ *     <li>Both HTTP responses and persisted state are asserted.</li>
+ * </ul>
+ * </p>
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,7 +52,8 @@ class UserControllerIT {
     private ObjectMapper objectMapper;
 
     /**
-     * Clean state before each test to ensure isolation.
+     * Removes all users before each test execution to guarantee that
+     * tests do not interfere with each other.
      */
     @BeforeEach
     void setup() {
@@ -44,7 +61,13 @@ class UserControllerIT {
     }
 
     /**
-     * Creates a user via POST and validates the created resource and listing endpoint.
+     * Creates a user via POST request and verifies:
+     * <ul>
+     *     <li>the returned JSON contains expected fields</li>
+     *     <li>the created user is present in the listing</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("POST + GET /users - crea e lista utenti")
@@ -64,7 +87,13 @@ class UserControllerIT {
     }
 
     /**
-     * Updates an existing user and verifies both HTTP response and persisted values.
+     * Updates an existing user via PUT request and verifies:
+     * <ul>
+     *     <li>the HTTP response contains updated attributes</li>
+     *     <li>the persisted state matches the expected values</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("PUT /users/{id} - aggiorna utente esistente")
@@ -87,7 +116,10 @@ class UserControllerIT {
     }
 
     /**
-     * Deletes a user and verifies it is no longer present in the repository.
+     * Deletes a user via DELETE request and verifies that
+     * the repository no longer contains the entity.
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("DELETE /users/{id} - elimina utente")

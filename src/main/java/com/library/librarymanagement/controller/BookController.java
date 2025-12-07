@@ -7,19 +7,26 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST controller responsible for handling HTTP requests related to Books.
+ * REST controller exposing CRUD operations for {@link Book} resources.
  * <p>
- * This controller exposes CRUD operations via RESTful endpoints under:
- * /books
+ * Requests are mapped under the base URI <strong>/books</strong> and allow interaction with
+ * the book catalogue through standard HTTP operations.
+ *
+ * <h2>Available endpoints</h2>
+ * <ul>
+ *     <li><strong>GET /books</strong> — retrieve all books</li>
+ *     <li><strong>POST /books</strong> — create a new book</li>
+ *     <li><strong>PUT /books/{id}</strong> — update an existing book</li>
+ *     <li><strong>DELETE /books/{id}</strong> — delete a book by ID</li>
+ * </ul>
+ *
  * <p>
- * Provided operations:
- * - GET    /books        -> retrieve all books
- * - POST   /books        -> create a new book
- * - PUT    /books/{id}   -> update an existing book
- * - DELETE /books/{id}   -> delete a book by ID
- * <p>
- * The controller delegates persistence operations to the BookRepository,
- * which interacts with the database using Spring Data JPA.
+ * Persistence operations are delegated to the {@link BookRepository}, which uses Spring Data JPA
+ * to communicate with the underlying database.
+ * </p>
+ *
+ * @see Book
+ * @see BookRepository
  */
 @RestController
 @RequestMapping("/books")
@@ -28,17 +35,18 @@ public class BookController {
     private final BookRepository bookRepository;
 
     /**
-     * Constructor-based dependency injection.
-     * Spring will provide a BookRepository implementation at runtime.
+     * Constructs a new {@code BookController} instance.
+     *
+     * @param bookRepository the repository managing {@link Book} persistence
      */
     public BookController(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
     /**
-     * Retrieves all books from the database.
+     * Retrieves all books currently stored in the database.
      *
-     * @return List<Book> containing all stored books.
+     * @return a list of all {@link Book} entities
      */
     @GetMapping
     public List<Book> getAllBooks() {
@@ -46,10 +54,10 @@ public class BookController {
     }
 
     /**
-     * Creates and persists a new book based on the request body.
+     * Creates and stores a new book.
      *
-     * @param book the Book object received in the request.
-     * @return the newly created Book instance.
+     * @param book the {@link Book} instance received in the request body
+     * @return the persisted {@link Book} object
      */
     @PostMapping
     public Book createBook(@RequestBody Book book) {
@@ -57,12 +65,13 @@ public class BookController {
     }
 
     /**
-     * Updates an existing book.
-     * Throws an exception if the provided ID is not found.
+     * Updates the information of an existing book identified by the given ID.
+     * <p>
+     * If no book exists with the provided ID, an exception is thrown by {@link java.util.Optional#orElseThrow()}.
      *
-     * @param id          identifier of the book to update
-     * @param bookDetails object containing the updated fields
-     * @return the updated Book instance
+     * @param id          the unique identifier of the book to update
+     * @param bookDetails a {@link Book} instance containing updated field values
+     * @return the updated {@link Book} entity
      */
     @PutMapping("/{id}")
     public Book updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
@@ -74,9 +83,11 @@ public class BookController {
     }
 
     /**
-     * Deletes a book by its ID.
+     * Deletes the book matching the given ID.
+     * <p>
+     * If no such ID exists, Spring automatically handles the exception.
      *
-     * @param id identifier of the book to delete
+     * @param id the unique identifier of the book to delete
      */
     @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable Long id) {

@@ -3,23 +3,32 @@ package com.library.librarymanagement.entity;
 import jakarta.persistence.*;
 
 /**
- * Entity class representing a Book in the library system.
+ * Entity class representing a book in the library system.
  * <p>
- * Each book has:
- * - an auto-generated ID
- * - a title
- * - an author name (string field for simplicity)
- * - a publication year
+ * This class is mapped to a relational database table using JPA and contains
+ * information relevant to a single book record.
+ *
+ * <h2>Attributes</h2>
+ * <ul>
+ *     <li><strong>id</strong> — unique identifier, auto-generated</li>
+ *     <li><strong>title</strong> — title of the book</li>
+ *     <li><strong>author</strong> — name of the author (stored as a string)</li>
+ *     <li><strong>publicationYear</strong> — year in which the book was published</li>
+ * </ul>
+ *
  * <p>
- * This entity is stored in the database via JPA
- * and is used in CRUD operations across the system.
+ * This entity is used throughout the system in CRUD operations and is persisted
+ * via Spring Data JPA in cooperation with
+ * {@link com.library.librarymanagement.repository.BookRepository BookRepository}.
+ * </p>
  */
 @Entity
 public class Book {
 
     /**
      * Unique identifier for the book.
-     * Generated automatically by the database.
+     * <p>
+     * The value is generated automatically using the identity strategy.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +41,9 @@ public class Book {
 
     /**
      * Name of the author.
-     * Note: stored as a simple string, not a relationship for simplicity.
+     * <p>
+     * Note: stored as a simple string rather than as an entity relationship
+     * to simplify the model.
      */
     private String author;
 
@@ -48,12 +59,11 @@ public class Book {
     }
 
     /**
-     * Convenience constructor used when creating
-     * a new Book instance programmatically.
+     * Creates a new instance of {@code Book} with the provided attributes.
      *
-     * @param title  title of the book
-     * @param author name of the author
-     * @param year   publication year
+     * @param title  the title of the book
+     * @param author the name of the author
+     * @param year   the publication year
      */
     public Book(String title, String author, int year) {
         this.title = title;
@@ -62,14 +72,18 @@ public class Book {
     }
 
     /**
-     * @return unique identifier of the book
+     * Returns the unique identifier of the book.
+     *
+     * @return the book's ID
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * @return title of the book
+     * Returns the title of the book.
+     *
+     * @return the book title
      */
     public String getTitle() {
         return title;
@@ -85,7 +99,9 @@ public class Book {
     }
 
     /**
-     * @return author name
+     * Returns the name of the author.
+     *
+     * @return the author name
      */
     public String getAuthor() {
         return author;
@@ -101,7 +117,9 @@ public class Book {
     }
 
     /**
-     * @return publication year of the book
+     * Returns the publication year.
+     *
+     * @return the year the book was published
      */
     public int getPublicationYear() {
         return publicationYear;
@@ -110,7 +128,7 @@ public class Book {
     /**
      * Updates the publication year of the book.
      *
-     * @param publicationYear new year to assign
+     * @param publicationYear new year value to assign
      */
     public void setPublicationYear(int publicationYear) {
         this.publicationYear = publicationYear;

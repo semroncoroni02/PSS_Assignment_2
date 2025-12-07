@@ -17,20 +17,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests end-to-end for AuthorController.
+ * Integration tests end-to-end for {@code AuthorController}.
  * <p>
- * These tests exercise the controller, the service/repository layer and the persistence,
- * using MockMvc to simulate HTTP requests.
- * <p>
- * Scope:
- * - POST /authors -> create an author
- * - GET  /authors -> list authors
- * - PUT  /authors/{id} -> update author
- * - DELETE /authors/{id} -> delete author
+ * These tests exercise the controller layer together with persistence (repository)
+ * using {@link MockMvc} to simulate HTTP requests.
+ *
+ * <h2>Scope</h2>
+ * <ul>
+ *     <li>POST /authors — create an author</li>
+ *     <li>GET  /authors — list authors</li>
+ *     <li>PUT  /authors/{id} — update author</li>
+ *     <li>DELETE /authors/{id} — delete author</li>
+ * </ul>
+ *
  * <p>
  * Notes:
- * - The repository is cleaned before each test to ensure isolation.
- * - The tests assert both HTTP responses and the state persisted in the repository.
+ * <ul>
+ *     <li>The repository is cleaned before each test to ensure isolation.</li>
+ *     <li>Tests assert both HTTP responses and persisted state in the repository.</li>
+ * </ul>
+ * </p>
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -57,6 +63,8 @@ class AuthorControllerIT {
     /**
      * Integration test that creates an author via POST and then verifies
      * the created author is returned and is present in the listing endpoint.
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("POST + GET /authors - crea e lista autori")
@@ -80,6 +88,8 @@ class AuthorControllerIT {
     /**
      * Integration test that updates an existing author via PUT and verifies both
      * HTTP response and persisted state in the repository.
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("PUT /authors/{id} - aggiorna autore esistente")
@@ -106,6 +116,8 @@ class AuthorControllerIT {
 
     /**
      * Integration test that deletes an existing author and verifies it is no longer present.
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("DELETE /authors/{id} - elimina autore")

@@ -17,15 +17,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests end-to-end for BookController.
+ * Integration tests end-to-end for {@code BookController}.
  * <p>
- * These tests validate REST endpoints and persistence interactions:
- * - POST /books -> create
- * - GET  /books -> list
- * - PUT  /books/{id} -> update
- * - DELETE /books/{id} -> delete
+ * These tests validate REST endpoints and persistence interactions involving
+ * {@link Book} entities, using {@link MockMvc} to simulate HTTP requests.
+ *
+ * <h2>Scope</h2>
+ * <ul>
+ *     <li>POST /books — create a book</li>
+ *     <li>GET  /books — list books</li>
+ *     <li>PUT  /books/{id} — update book</li>
+ *     <li>DELETE /books/{id} — delete book</li>
+ * </ul>
+ *
  * <p>
- * The repository is reset before each test to maintain isolation.
+ * Notes:
+ * <ul>
+ *     <li>The repository is reset before every test to guarantee isolation.</li>
+ *     <li>Both HTTP responses and persisted state are verified.</li>
+ * </ul>
+ * </p>
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,7 +52,8 @@ class BookControllerIT {
     private ObjectMapper objectMapper;
 
     /**
-     * Ensure a clean repository before every test case.
+     * Ensure a clean repository before every test case to avoid interference
+     * between test executions.
      */
     @BeforeEach
     void setup() {
@@ -49,7 +61,13 @@ class BookControllerIT {
     }
 
     /**
-     * Creates a book via POST and verifies response and listing behavior.
+     * Creates a book via POST request and verifies:
+     * <ul>
+     *     <li>the returned JSON contains expected fields</li>
+     *     <li>the created book is present in the listing</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("POST + GET /books - crea e lista libri")
@@ -70,7 +88,13 @@ class BookControllerIT {
     }
 
     /**
-     * Updates an existing book and verifies both HTTP response and database state.
+     * Updates an existing book via PUT request and verifies:
+     * <ul>
+     *     <li>the HTTP response contains updated fields</li>
+     *     <li>the persisted book state is updated in the repository</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("PUT /books/{id} - aggiorna libro esistente")
@@ -95,7 +119,10 @@ class BookControllerIT {
     }
 
     /**
-     * Deletes a book and verifies it is removed from the repository.
+     * Deletes a book via DELETE request and verifies that
+     * the repository no longer contains the entity.
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
     @DisplayName("DELETE /books/{id} - elimina libro")

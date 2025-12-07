@@ -24,11 +24,27 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Unit test for AuthorController.
+ * Unit tests for {@code AuthorController}.
  * <p>
- * These tests mock the repository layer to isolate the web layer behavior.
- * Each test verifies HTTP responses, JSON payloads and expected interaction
- * with the repository.
+ * These tests validate the HTTP layer in isolation by mocking interactions
+ * with {@link AuthorRepository}. JSON payloads, HTTP responses and expected
+ * repository calls are verified using {@link MockMvc}.
+ *
+ * <h2>Scope</h2>
+ * <ul>
+ *     <li>GET /authors — list authors</li>
+ *     <li>POST /authors — create author</li>
+ *     <li>PUT /authors/{id} — update author</li>
+ *     <li>DELETE /authors/{id} — delete author</li>
+ * </ul>
+ *
+ * <p>
+ * Notes:
+ * <ul>
+ *     <li>No persistence layer is used; repository behaviors are fully mocked.</li>
+ *     <li>Tests focus solely on controller behavior and HTTP contract.</li>
+ * </ul>
+ * </p>
  */
 @WebMvcTest(AuthorController.class)
 class AuthorControllerTest {
@@ -43,10 +59,17 @@ class AuthorControllerTest {
     private ObjectMapper objectMapper;
 
     /**
-     * Retrieves a list of authors via GET and verifies JSON structure and content.
+     * Retrieves a list of authors via a GET request and verifies:
+     * <ul>
+     *     <li>response status is HTTP 200</li>
+     *     <li>array size matches the mocked repository output</li>
+     *     <li>JSON structure contains expected fields</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
-    @DisplayName("GET /authors - returns all authors")
+    @DisplayName("GET /authors - ritorna lista autori")
     void getAllAuthors() throws Exception {
         List<Author> authors = Arrays.asList(
                 new Author("Italo Calvino", "Italiana"),
@@ -62,10 +85,16 @@ class AuthorControllerTest {
     }
 
     /**
-     * Creates a new author via POST and validates returned JSON fields.
+     * Creates a new author via POST request and verifies:
+     * <ul>
+     *     <li>response status is HTTP 200</li>
+     *     <li>returned JSON matches input payload</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
-    @DisplayName("POST /authors - creates a new author")
+    @DisplayName("POST /authors - crea un nuovo autore")
     void createAuthor() throws Exception {
         Author input = new Author("Umberto Eco", "Italiana");
 
@@ -81,10 +110,16 @@ class AuthorControllerTest {
     }
 
     /**
-     * Updates an existing author and checks both HTTP result and updated values.
+     * Updates an existing author via PUT request and validates:
+     * <ul>
+     *     <li>repository finds the existing entity</li>
+     *     <li>updated author values are returned in the response</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
-    @DisplayName("PUT /authors/{id} - updates existing author")
+    @DisplayName("PUT /authors/{id} - aggiorna autore esistente")
     void updateAuthor() throws Exception {
         Long id = 1L;
         Author existing = new Author("Autore Vecchio", "Vecchia");
@@ -103,10 +138,13 @@ class AuthorControllerTest {
     }
 
     /**
-     * Deletes an author via DELETE and verifies the repository interaction.
+     * Deletes an author via DELETE request and verifies that the repository
+     * deletion method is invoked with the proper identifier.
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
-    @DisplayName("DELETE /authors/{id} - deletes author")
+    @DisplayName("DELETE /authors/{id} - elimina autore")
     void deleteAuthor() throws Exception {
         Long id = 1L;
 

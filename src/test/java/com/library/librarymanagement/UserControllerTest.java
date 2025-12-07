@@ -24,11 +24,27 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Unit test for UserController.
+ * Unit tests for {@code UserController}.
  * <p>
- * These tests mock the repository layer to isolate the web layer behavior.
- * Each test verifies HTTP responses, JSON payloads and expected interaction
- * with the repository.
+ * These tests validate controller behavior by mocking interactions
+ * with the {@link UserRepository}. They assert JSON payloads,
+ * HTTP responses and repository usage via {@link MockMvc}.
+ *
+ * <h2>Scope</h2>
+ * <ul>
+ *     <li>GET /users — list users</li>
+ *     <li>POST /users — create a user</li>
+ *     <li>PUT /users/{id} — update a user</li>
+ *     <li>DELETE /users/{id} — delete a user</li>
+ * </ul>
+ *
+ * <p>
+ * Notes:
+ * <ul>
+ *     <li>No persistence layer is used — repository calls are mocked.</li>
+ *     <li>Tests focus exclusively on the HTTP layer contract.</li>
+ * </ul>
+ * </p>
  */
 @WebMvcTest(UserController.class)
 class UserControllerTest {
@@ -43,10 +59,17 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     /**
-     * Retrieves a list of users via GET and verifies JSON structure and content.
+     * Retrieves all users via GET request and verifies:
+     * <ul>
+     *     <li>HTTP status is OK</li>
+     *     <li>returned array size matches mocked data</li>
+     *     <li>JSON contains expected attributes</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc execution fails
      */
     @Test
-    @DisplayName("GET /users - returns all users")
+    @DisplayName("GET /users - restituisce tutti gli utenti")
     void getAllUsers() throws Exception {
         List<User> users = Arrays.asList(
                 new User("Mario Rossi", "mario.rossi@example.com"),
@@ -62,13 +85,20 @@ class UserControllerTest {
     }
 
     /**
-     * Creates a new user via POST and validates returned JSON fields.
+     * Creates a new user via POST request and verifies:
+     * <ul>
+     *     <li>HTTP status is OK</li>
+     *     <li>returned JSON contains expected fields</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc execution fails
      */
     @Test
-    @DisplayName("POST /users - creates a new user")
+    @DisplayName("POST /users - crea un nuovo utente")
     void createUser() throws Exception {
         User input = new User("Giulia Verdi", "giulia.verdi@example.com");
-        Mockito.when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+        Mockito.when(userRepository.save(any(User.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,17 +109,24 @@ class UserControllerTest {
     }
 
     /**
-     * Updates an existing user and checks both HTTP result and updated values.
+     * Updates an existing user via PUT request and verifies:
+     * <ul>
+     *     <li>repository lookup returns the entity</li>
+     *     <li>returned JSON reflects updated values</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc execution fails
      */
     @Test
-    @DisplayName("PUT /users/{id} - updates existing user")
+    @DisplayName("PUT /users/{id} - aggiorna utente esistente")
     void updateUser() throws Exception {
         Long id = 5L;
         User existing = new User("Old Name", "old@example.com");
         User update = new User("New Name", "new@example.com");
 
         Mockito.when(userRepository.findById(eq(id))).thenReturn(Optional.of(existing));
-        Mockito.when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+        Mockito.when(userRepository.save(any(User.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
 
         mockMvc.perform(put("/users/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -100,10 +137,16 @@ class UserControllerTest {
     }
 
     /**
-     * Deletes a user via DELETE and verifies the repository interaction.
+     * Deletes a user via DELETE request and verifies:
+     * <ul>
+     *     <li>HTTP status is OK</li>
+     *     <li>repository deletion is invoked with provided ID</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc execution fails
      */
     @Test
-    @DisplayName("DELETE /users/{id} - deletes user")
+    @DisplayName("DELETE /users/{id} - elimina utente")
     void deleteUser() throws Exception {
         Long id = 7L;
 

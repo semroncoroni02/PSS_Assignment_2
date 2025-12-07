@@ -24,11 +24,27 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Unit test for BookController.
+ * Unit tests for {@code BookController}.
  * <p>
- * These tests mock the repository layer to isolate the web layer behavior.
- * Each test verifies HTTP responses, JSON payloads and expected interaction
- * with the repository.
+ * These tests validate the HTTP layer by mocking persistence interactions
+ * with the {@link BookRepository}. They assert both JSON responses and
+ * expected repository calls using {@link MockMvc}.
+ *
+ * <h2>Scope</h2>
+ * <ul>
+ *     <li>GET /books — list books</li>
+ *     <li>POST /books — create book</li>
+ *     <li>PUT /books/{id} — update book</li>
+ *     <li>DELETE /books/{id} — delete book</li>
+ * </ul>
+ *
+ * <p>
+ * Notes:
+ * <ul>
+ *     <li>No real database is used — repository methods are mocked.</li>
+ *     <li>Tests focus exclusively on controller behavior and HTTP contract.</li>
+ * </ul>
+ * </p>
  */
 @WebMvcTest(BookController.class)
 class BookControllerTest {
@@ -43,10 +59,17 @@ class BookControllerTest {
     private ObjectMapper objectMapper;
 
     /**
-     * Retrieves a list of books via GET and verifies JSON structure and content.
+     * Retrieves all books via GET request and verifies:
+     * <ul>
+     *     <li>HTTP status is OK</li>
+     *     <li>JSON array size matches mocked result</li>
+     *     <li>returned objects contain expected attributes</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
-    @DisplayName("GET /books - returns all books")
+    @DisplayName("GET /books - restituisce lista libri")
     void getAllBooks() throws Exception {
         List<Book> books = Arrays.asList(
                 new Book("Il nome della rosa", "Umberto Eco", 1980),
@@ -62,10 +85,16 @@ class BookControllerTest {
     }
 
     /**
-     * Creates a new book via POST and validates returned JSON fields.
+     * Creates a book via POST request and verifies:
+     * <ul>
+     *     <li>response contains expected JSON fields</li>
+     *     <li>returned object matches input</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
-    @DisplayName("POST /books - creates a new book")
+    @DisplayName("POST /books - crea un nuovo libro")
     void createBook() throws Exception {
         Book input = new Book("Le città invisibili", "Italo Calvino", 1972);
         Mockito.when(bookRepository.save(any(Book.class)))
@@ -81,10 +110,16 @@ class BookControllerTest {
     }
 
     /**
-     * Updates an existing book and checks both HTTP result and updated values.
+     * Updates an existing book via PUT request and verifies:
+     * <ul>
+     *     <li>repository lookup returns the entity</li>
+     *     <li>updated attributes are reflected in JSON response</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
-    @DisplayName("PUT /books/{id} - updates existing book")
+    @DisplayName("PUT /books/{id} - aggiorna libro esistente")
     void updateBook() throws Exception {
         Long id = 10L;
         Book existing = new Book("Old Title", "Old Author", 1990);
@@ -104,10 +139,16 @@ class BookControllerTest {
     }
 
     /**
-     * Deletes a book via DELETE and verifies the repository interaction.
+     * Deletes a book via DELETE request and verifies:
+     * <ul>
+     *     <li>HTTP response status is OK</li>
+     *     <li>repository deletion is invoked with correct ID</li>
+     * </ul>
+     *
+     * @throws Exception if MockMvc request execution fails
      */
     @Test
-    @DisplayName("DELETE /books/{id} - deletes book")
+    @DisplayName("DELETE /books/{id} - elimina libro")
     void deleteBook() throws Exception {
         Long id = 3L;
 
