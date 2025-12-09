@@ -1,84 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.library</groupId>
     <artifactId>library-management</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>library-management</name>
     <description>library-management</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
         <java.version>17</java.version>
     </properties>
+
     <dependencies>
+        <!-- Spring Data JPA + Hibernate -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
+        <!-- Spring Web (REST controllers) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- H2 in-memory database (runtime) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
 
-        <!-- Spring Boot Starter Test (JUnit 5, Mockito, AssertJ, MockMvc, ecc.) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- H2 per test sui repository -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Jackson per serializzazione/deserializzazione JSON -->
+        <!-- Jackson (di solito transitivo, ma non problematico includerlo esplicitamente) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- Test utilities (JUnit 5, Mockito, AssertJ, MockMvc, ecc.) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Spring Boot Maven plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- Surefire: unit test -->
+
+            <!-- Surefire: unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -89,25 +74,8 @@
                     </includes>
                 </configuration>
             </plugin>
-            <!-- Failsafe: integration test (eseguiti in 'verify') -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.2.5</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includes>
-                        <include>**/*IT.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
+
+            <!-- Failsafe: integration tests (verify phase) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -127,7 +95,7 @@
                 </configuration>
             </plugin>
 
-            <!-- === Javadoc Plugin FIX === -->
+            <!-- Javadoc plugin: non blocca la build su errori di doc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -142,14 +110,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- Nota: se si vuole un profilo integration, attivalo esplicitamente con -P integration -->
     <profiles>
         <profile>
             <id>integration</id>
             <properties>
-                <!-- profilo per integration: H2 in memoria -->
-                <spring.profiles.active>integration</spring.profiles.active>
+                <!-- non forziamo l'activation automatica qui; usa -P integration se necessario -->
             </properties>
         </profile>
     </profiles>
-
 </project>

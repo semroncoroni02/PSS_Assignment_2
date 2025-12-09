@@ -17,7 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * - and others
  * <p>
  * Future custom queries can be defined here, e.g.:
- * List<Book> findByAuthor(String author);
+ * {@code List<Book> findByAuthor(String author);}
  */
 public interface BookRepository extends JpaRepository<Book, Long> {
 }
